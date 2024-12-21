@@ -1,0 +1,48 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Welcome, {{ user.username }}
+{% endblock %}
+
+{% block content %}
+    <div class="max-w-[90%] mx-auto mt-10 px-6 py-8 bg-white">
+        <!-- Welcome Header -->
+        <h1 class="text-5xl text-gray-700 font-extrabold">
+            Welcome, {{ user.first_name }} {{ user.last_name }}!
+        </h1>
+        <p class="mt-2 text-gray-600 text-lg">
+            We're glad to have you here. Create engaging surveys and explore results with ease.
+        </p>
+        
+        <!-- Call to Action -->
+        <div class="mt-6">
+            <a href="{% url "create_survey" %}" class="bg-green-600 text-white font-medium py-3 px-5 rounded text-lg cursor-pointer">
+                Start a new Survey
+            </a>
+        </div>
+        
+        <!-- Dashboard Section -->
+        <div class="mt-10">
+            <h2 class="text-2xl font-semibold text-gray-700">
+                Your Surveys
+            </h2>
+            <div class="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {% for survey in surveys %}
+                    <div class="bg-gray-100 p-4 rounded-lg shadow-md">
+                        <h3 class="text-lg font-medium text-gray-800">
+                            {{ survey.title }}
+                        </h3>
+                        {% comment %} <div class="mt-4">
+                            <a href="{% url 'survey-detail' survey.id %}" 
+                                class="text-blue-500 hover:underline">View Details</a>
+                        </div> {% endcomment %}
+                    </div>
+                {% empty %}
+                    <p class="text-gray-600">
+                        You don't have any surveys yet. Create one to get started!
+                    </p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
