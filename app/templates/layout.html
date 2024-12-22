@@ -1,12 +1,14 @@
+{% load static tailwind_tags %}
+
 <!doctype html>
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <script src="https://cdn.tailwindcss.com"></script>
+        {% tailwind_css %}
         <title>{% block title %} Default Title {% endblock %}</title>
     </head>
-    <body class="w-full h-dvh">
+    <body class="w-full min-h-screen h-dvh">
         <nav
             class="flex fixed top-0 w-full items-center justify-between text-green-600 px-6 py-3 shadow-md bg-slate-900"
         >

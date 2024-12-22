@@ -1,7 +1,7 @@
 from django.shortcuts import render,redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from .models import Survey
+from .models import Survey, Question
 from django.contrib.auth import authenticate,login,logout
 
 # Create your views here.
@@ -61,9 +61,42 @@ def login_user(request):
         
     return render(request, './auth/login.html')
 
+@login_required(login_url='auth/register')
 def logout_user(request):
     logout(request)
     return redirect('login')
 
+@login_required(login_url='auth/register')
 def create_survey(request):
+    if request.method == 'POST':
+        title = request.POST.get('title')
+        survey = Survey.objects.create(
+            title= title,
+            user= request.user
+        )
+        print(survey)
+        redirect('create_question')
+
     return render(request, './survey/create.html')
+
+@login_required(login_url='auth/register')
+def create_question(request):
+    return render(request, './survey/create-question.html')
+
+def get_survey_by_id(request, survey_id):
+    return render(request, './survey/survey-by-id.html', {'survey_id': survey_id})
+
+@login_required(login_url='auth/register')
+def delete_survey_by_id(request, survey_id):
+    if survey_id is not None:
+        Survey.objects.filter(id = survey_id).delete()
+        print("Survey deleted!!")
+    
+    return redirect('home')
+
+def edit_survey_by_id(request, survey_id):
+    if survey_id is not None:
+        survey_info = Survey.objects.filter(id = survey_id)[0]
+        questions = Question.objects.filter(survey = survey_info)
+        print("survey_info", survey_info)
+        return render(request, './survey/edit-survey.html', {'survey_info': survey_info, 'questions': questions})

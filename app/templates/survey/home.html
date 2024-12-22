@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block content %}
-    <div class="w-full md:max-w-[90%] mx-auto px-0 md:px-6 py-8">
+    <div class="w-full lg:max-w-[90%] mx-auto px-0 lg:px-6 py-8">
         <!-- Welcome Header -->
         <h1 class="text-3xl md:text-5xl text-gray-200 font-extrabold">
             Welcome, {{ user.first_name }} {{ user.last_name }}!
@@ -26,19 +26,31 @@
             <h2 class="text-xl md:text-2xl font-bold text-gray-100">
                 Your Surveys
             </h2>
-            <div class="mt-2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="mt-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {% for survey in surveys %}
-                    <div class="bg-gray-100 p-4 rounded-lg shadow-md">
-                        <h3 class="text-lg font-medium text-gray-800">
-                            {{ survey.title }}
-                        </h3>
-                        {% comment %} <div class="mt-4">
-                            <a href="{% url 'survey-detail' survey.id %}"
-                                class="text-blue-500 hover:underline">View Details</a>
-                        </div> {% endcomment %}
+                    <div class="bg-slate-950 p-5 rounded-lg shadow-md space-y-3 w-full flex flex-col items-start justify-between">
+                        <div>
+                            <a href="{% url "get_survey_by_id" survey.id %}">
+                                <h3 class="text-lg font-medium text-gray-300">
+                                    {{ survey.title }}
+                                </h3>
+                            </a>
+                            <p class="text-blue-500">
+                                CreatedAt: {{survey.created_at}}
+                            </p>
+                        </div>
+
+                        <div class="flex items-center justify-end space-x-2 mt-4 w-full">
+                            <a href="{% url "edit_survey_by_id" survey.id %}" class="bg-blue-500 text-white font-medium py-1.5 px-4 rounded">
+                                Edit
+                            </a>
+                            <a href="{% url "delete_survey_by_id" survey.id %}" class="bg-red-500 text-white font-medium py-1.5 px-4 rounded">
+                                Delete
+                            </a>
+                        </div>
                     </div>
                 {% empty %}
-                    <p class="text-gray-200 text-sm md:text-lg">
+                    <p class="text-gray-400 text-sm md:text-lg">
                         You don't have any surveys yet. Create one to get started!
                     </p>
                 {% endfor %}

@@ -7,4 +7,8 @@ urlpatterns = [
     path('auth/login/', login_user, name='login'),
     path('auth/logout/', logout_user, name='logout'),
     path('create-survey/', create_survey, name='create_survey'),
+    path('create-question/', create_question, name='create_question'),
+    path('survey/<survey_id>/', get_survey_by_id, name='get_survey_by_id'), 
+    path('survey/<survey_id>/delete', delete_survey_by_id, name='delete_survey_by_id'), 
+    path('survey/<survey_id>/edit', edit_survey_by_id, name='edit_survey_by_id'), 
 ]
