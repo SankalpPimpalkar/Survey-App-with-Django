@@ -1,37 +1,37 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <title>
-        {% block title %}
-            Default Title    
-        {% endblock %}
-    </title>
-</head>
-<body>
-    <nav class="flex items-center justify-between text-green-600 px-6 py-3 shadow-md">
-        <h1 class="text-lg font-semibold">
-            <a href="/">
-                Django Survey
-            </a>
-        </h1>
-        {% if user.is_authenticated %}
-            <a href="{% url 'logout' %}" class="bg-red-600 text-white font-medium py-2 px-4 rounded hover:bg-red-700 transition duration-300">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <script src="https://cdn.tailwindcss.com"></script>
+        <title>{% block title %} Default Title {% endblock %}</title>
+    </head>
+    <body class="w-full h-dvh">
+        <nav
+            class="flex fixed top-0 w-full items-center justify-between text-green-600 px-6 py-3 shadow-md bg-slate-900"
+        >
+            <h1 class="text-lg font-semibold">
+                <a href="/"> Django Survey </a>
+            </h1>
+            {% if user.is_authenticated %}
+            <a
+                href="{% url 'logout' %}"
+                class="bg-red-600 text-white font-medium py-2 px-4 rounded hover:bg-red-700 transition duration-300"
+            >
                 Logout
             </a>
-        {% else %}
-            <a href="{% url 'login' %}" class="bg-green-600 text-white font-medium py-2 px-4 rounded hover:bg-green-700 transition duration-300">
+            {% else %}
+            <a
+                href="{% url 'login' %}"
+                class="bg-green-600 text-white font-medium py-2 px-4 rounded hover:bg-green-700 transition duration-300"
+            >
                 Login
             </a>
-        {% endif %}
-    </nav>
-    
-    <div class="p-5 w-full">
-        {% block content %}
-            It's a default content
-        {% endblock %}
-    </div>
-</body>
+            {% endif %}
+        </nav>
+
+        <div class="p-5 w-full h-full bg-slate-800 pt-20 md:pt-32">
+            {% block content %} It's a default content {% endblock %}
+        </div>
+    </body>
 </html>

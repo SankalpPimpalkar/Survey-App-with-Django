@@ -85,7 +85,7 @@ WSGI_APPLICATION = 'survey.wsgi.application'
 
 # ----------- POSTGRESQL
 
-import dj_database_url
+import dj_database_url # type: ignore
 
 DATABASES = {
     'default': dj_database_url.parse(
