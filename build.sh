@@ -1,16 +1,16 @@
 #!/bin/bash
-# Install dependencies
+
+# Install Python dependencies
 pip3 install -r requirements.txt
 
-# Install Node.js and npm
-curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
-apt-get install -y nodejs
+# Install Node.js dependencies using npm
+npm install
 
-# Debugging: Check Node.js and npm versions
-node --version
-npm --version
-
-# Set up Django
+# Collect static files (important for Django's static files management)
 python3 manage.py collectstatic --noinput
-python3 manage.py tailwind build
+
+# Build Tailwind CSS
+npm run build
+
+# Apply database migrations
 python3 manage.py migrate
