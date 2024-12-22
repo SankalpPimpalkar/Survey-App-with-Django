@@ -74,12 +74,26 @@ WSGI_APPLICATION = 'survey.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+# ----------- SQLITE
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
+
+# ----------- POSTGRESQL
+
+import dj_database_url
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    'default': dj_database_url.parse(
+        'postgres://postgres.hhwkuwyzltlpvdfdmrfy:zBH2Nm6xRV4IrbQI@aws-0-ap-south-1.pooler.supabase.com:6543/postgres?sslmode=require',
+        conn_max_age=600,
+    )
 }
+
 
 
 # Password validation
