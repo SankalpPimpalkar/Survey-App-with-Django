@@ -3,14 +3,14 @@
 # Install Python dependencies
 pip3 install -r requirements.txt
 
-# Install Node.js dependencies using npm
+# Install Node.js dependencies
 npm install
 
-# Collect static files (important for Django's static files management)
+# Collect static files for production
 python3 manage.py collectstatic --noinput
 
-# Build Tailwind CSS
+# Build Tailwind CSS (This will run your npm scripts to generate the styles)
 npm run build
 
-# Apply database migrations
+# Apply database migrations (for Vercel deployment)
 python3 manage.py migrate
