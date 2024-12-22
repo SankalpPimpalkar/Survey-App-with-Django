@@ -1,6 +1,6 @@
 #!/bin/bash
 # Install dependencies
-pip install -r requirements.txt
+pip3 install -r requirements.txt
 
 # Install Node.js and npm
 curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
