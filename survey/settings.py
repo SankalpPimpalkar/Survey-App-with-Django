@@ -147,5 +147,5 @@ WHITENOISE_AUTOREFRESH = True
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 TAILWIND_APP_NAME = 'theme'
-NPM_BIN_PATH = '/usr/local/bin/npm'
+NPM_BIN_PATH = '/usr/bin/npm'
 TAILWIND_CSS_PATH = 'static/css/dist/styles.css'

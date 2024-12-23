@@ -1,11 +1,12 @@
 from django.shortcuts import render,redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from .models import Survey, Question
+from .models import Survey, Question, Choice
 from django.contrib.auth import authenticate,login,logout
 
 # Create your views here.
 
+# AUTHENTICATION ROUTES
 @login_required(login_url='auth/register')
 def home(request):
     
@@ -66,6 +67,9 @@ def logout_user(request):
     logout(request)
     return redirect('login')
 
+
+
+# MAIN ROUTES
 @login_required(login_url='auth/register')
 def create_survey(request):
     if request.method == 'POST':
@@ -74,17 +78,37 @@ def create_survey(request):
             title= title,
             user= request.user
         )
-        print(survey)
-        redirect('create_question')
+        return redirect(f'/survey/{survey.id}/add-question/')
 
     return render(request, './survey/create.html')
 
-@login_required(login_url='auth/register')
-def create_question(request):
-    return render(request, './survey/create-question.html')
+def add_question(request, survey_id):
+    survey = Survey.objects.filter(id = survey_id)[0]
+    if request.method == 'POST':
+        question_text = request.POST.get('question_text')
+        choices = []
+        for i in range(1,5):
+            choices.append(request.POST.get(f'choice_{i}'))
+        
+        new_question = Question.objects.create(
+            survey = survey,
+            text = question_text
+        )
 
-def get_survey_by_id(request, survey_id):
-    return render(request, './survey/survey-by-id.html', {'survey_id': survey_id})
+        for choice in choices:
+            if choice != '':
+                Choice.objects.create(
+                    question = new_question,
+                    text = choice
+                )
+        
+        if request.POST.get('action') == 'add_another':
+            return render(request, './survey/add-question.html')
+        else:
+            return redirect('home')
+
+
+    return render(request, './survey/add-question.html')
 
 @login_required(login_url='auth/register')
 def delete_survey_by_id(request, survey_id):
@@ -94,9 +118,5 @@ def delete_survey_by_id(request, survey_id):
     
     return redirect('home')
 
-def edit_survey_by_id(request, survey_id):
-    if survey_id is not None:
-        survey_info = Survey.objects.filter(id = survey_id)[0]
-        questions = Question.objects.filter(survey = survey_info)
-        print("survey_info", survey_info)
-        return render(request, './survey/edit-survey.html', {'survey_info': survey_info, 'questions': questions})
+def get_survey_by_id(request, survey_id):
+    return render(request, './survey/survey-by-id.html', {'survey_id': survey_id})
