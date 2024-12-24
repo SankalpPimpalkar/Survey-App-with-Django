@@ -1,24 +1,12 @@
-from django.shortcuts import render,redirect
+from django.shortcuts import render,redirect,get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from .models import Survey, Question, Choice
+from .models import Survey, Question, Choice, Response
 from django.contrib.auth import authenticate,login,logout
 
 # Create your views here.
 
 # AUTHENTICATION ROUTES
-@login_required(login_url='auth/register')
-def home(request):
-    
-    surveys = Survey.objects.filter(user = request.user)
-    print(surveys)
-    
-    data = {
-        'surveys': surveys
-    }
-    
-    return render(request, './survey/home.html', data)
-
 def register(request):
     if request.method == 'POST':
         data = {
@@ -71,6 +59,18 @@ def logout_user(request):
 
 # MAIN ROUTES
 @login_required(login_url='auth/register')
+def home(request):
+    
+    surveys = Survey.objects.filter(user = request.user)
+    print(surveys)
+    
+    data = {
+        'surveys': surveys
+    }
+    
+    return render(request, './survey/home.html', data)
+
+@login_required(login_url='auth/register')
 def create_survey(request):
     if request.method == 'POST':
         title = request.POST.get('title')
@@ -82,6 +82,7 @@ def create_survey(request):
 
     return render(request, './survey/create.html')
 
+@login_required(login_url='auth/register')
 def add_question(request, survey_id):
     survey = Survey.objects.filter(id = survey_id)[0]
     if request.method == 'POST':
@@ -119,4 +120,32 @@ def delete_survey_by_id(request, survey_id):
     return redirect('home')
 
 def get_survey_by_id(request, survey_id):
-    return render(request, './survey/survey-by-id.html', {'survey_id': survey_id})
+    survey = get_object_or_404(Survey, id=survey_id)
+    survey_url = request.build_absolute_uri()
+
+    if request.method == 'POST':
+        for question in survey.questions.all():
+            # Get the submitted choices for this question
+            submitted_choices = request.POST.getlist(f"choice_{question.id}[]")
+            print(f"Submitted choices for question {question.id}: {submitted_choices}")
+
+            for choice_id in submitted_choices:
+                choice = get_object_or_404(Choice, id=choice_id)
+                print("choice", choice)
+                print("question", question)
+
+                # Create a response for each selected choice
+                response = Response.objects.create(
+                    survey=survey,
+                    question=question,
+                    choice=choice
+                )
+
+                # Associate the response with the authenticated user if available
+                if request.user.is_authenticated:
+                    response.user = request.user
+                response.save()
+
+        return render(request, './survey/thank-you.html')
+
+    return render(request, './survey/survey-by-id.html', {'survey': survey, 'survey_url': survey_url})

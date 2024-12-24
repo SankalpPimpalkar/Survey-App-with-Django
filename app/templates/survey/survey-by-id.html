@@ -1,32 +1,95 @@
 {% extends "layout.html" %}
 
 {% block title %}
-    Get Survey By {{survey_id}}
+    Survey Preview - {{ survey.title }}
 {% endblock %}
 
 {% block content %}
-    <div class="max-w-3xl mx-auto mt-10 px-3 py-6 md:px-6 rounded-lg">
-        <h2 class="text-2xl font-extrabold text-gray-100 mb-6 text-start">
-            Create Survey
+    <div class="max-w-3xl h-full mx-auto mt-10 px-3 py-6 md:px-6 rounded-lg">
+        <h2 class="text-3xl font-extrabold text-gray-100 mb-6 text-start">
+            {{ survey.title }}
         </h2>
 
-        <form method="post" class="space-y-4">
-            {% csrf_token %}
-            <!-- Title -->
-            <div>
-                <label for="title" class="block text-sm font-medium text-gray-200">
-                    Title
-                </label>
-                <input type="text" id="title" name="title" 
-                    class="w-full mt-2 px-4 py-2 rounded-md shadow-sm outline-none border border-gray-200" 
-                    placeholder="Enter your title" required>
-            </div>
-
-            <div class="flex justify-end w-full">
-                <button type="submit" class="bg-blue-500 text-white font-medium px-4 py-2 rounded-md">
-                    Create
+        <!-- Survey URL Section -->
+        <div class="bg-gray-800 border border-gray-600 p-5 rounded-lg shadow-md mb-6">
+            <h3 class="text-lg font-bold text-gray-100 mb-3">Survey Link</h3>
+            <div class="flex items-center justify-between bg-gray-900 text-gray-300 rounded-md px-4 py-2">
+                <span id="surveyUrl">{{ survey_url }}</span>
+                <button 
+                    onclick="copyToClipboard('surveyUrl')" 
+                    class="bg-blue-500 hover:bg-blue-600 text-white font-medium px-4 py-1 rounded-md">
+                    Copy
                 </button>
             </div>
-        </form>
+        </div>
+        <!-- Questions and Choices Section -->
+        <div class="mt-8">
+            <h3 class="text-2xl font-bold text-gray-100 mb-4">Questions</h3>
+            
+            <form method="post" class="overflow-y-auto">
+                {% csrf_token %}
+                {% for question in survey.questions.all %}
+                    <div class="bg-gray-800 border border-gray-600 p-5 rounded-lg shadow-md mb-6">
+                        <!-- Question Text -->
+                        <h4 class="text-lg font-medium text-gray-200 mb-3">
+                            Q{{ forloop.counter }}: {{ question.text }}
+                        </h4>
+
+                        <!-- Choices -->
+                        <div class="space-y-2">
+                            {% for choice in question.choices.all %}
+                                <div class="flex items-center space-x-2">
+                                    {% if request.user != survey.user %}
+                                    <input type="checkbox" 
+                                    id="choice_{{ choice.id }}" 
+                                    name="choice_{{ question.id }}[]" 
+                                    value="{{ choice.id }}" 
+                                    class="w-5 h-5 text-green-500 border bg-gray-700 border-gray-600 rounded">                                
+                                    {% endif %}
+                                    <label for="{{ choice.id }}" class="text-gray-300">
+                                        {{ choice.text }}
+                                    </label>
+                                </div>
+                            {% empty %}
+                                <p class="text-gray-400 italic">No choices available for this question.</p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% empty %}
+                    <p class="text-gray-400 italic">No questions available for this survey.</p>
+                {% endfor %}
+
+                <!-- Submit Button for Non-Creator -->
+                {% if request.user != survey.user %}
+                    <div class="flex justify-center mt-6">
+                        <button type="submit" class="w-full bg-blue-500 text-white font-medium px-6 py-3 rounded-md">
+                            Submit Survey
+                        </button>
+                    </div>
+                {% endif %}
+            </form>
+        </div>
+
+        <!-- Add Question Button for Creator -->
+        {% if request.user == survey.user %}
+            <div class="flex justify-end mt-6">
+                <a href="{% url "add_question" survey.id %}" class="bg-blue-500 text-white font-medium px-4 py-2 rounded-md">
+                    Add Question
+                </a>
+            </div>
+        {% endif %}
     </div>
+{% endblock %}
+
+{% block script %}
+<script>
+    function copyToClipboard(elementId) {
+        const textToCopy = document.getElementById(elementId).innerText;
+        navigator.clipboard.writeText(textToCopy).then(() => {
+            alert("Survey link copied to clipboard!");
+        }).catch(err => {
+            console.error("Failed to copy: ", err);
+        });
+    }
+</script>
 {% endblock %}
